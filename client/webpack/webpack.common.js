@@ -1,6 +1,8 @@
 const path = require('path');
+const fs = require('fs');
 const pkg = require('../package.json');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const babelrc = JSON.parse(fs.readFileSync(process.cwd() + '/.babelrc', 'utf8'));
 
 module.exports = {
   entry: {
@@ -17,7 +19,14 @@ module.exports = {
     rules: [
       {
         test: /\.(t|j)sx?$/,
-        use: 'babel-loader'
+        exclude: /node_modules/,
+        use: [
+        {
+            loader: 'babel-loader',
+            options: Object.assign({}, babelrc, { cacheDirectory: true })
+        }, {
+            loader: 'ts-loader'
+        }]
       },
       {
         test: /\.(png|jpg|jpeg|gif|swf|svg|woff|woff2|ttf|eot)$/,
